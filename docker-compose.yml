@@ -1,0 +1,47 @@
+version: "3"
+services:
+  app:
+    container_name: wager_app_container
+    build: .
+    ports:
+      - 8080:8080
+    restart: on-failure
+    # volumes:
+    #   - src:/usr/src/app/
+    depends_on:
+      - wager-db
+    environment:
+      - DB_HOST=wager-db
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - DB_NAME=wager
+      - DB_PORT=3306
+    networks:
+      - testnet
+
+  wager-db:
+    # image: mysql:5.7
+    build:
+      context: ./MYSQL
+    container_name: wager_db_container
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_HOST=127.0.0.1
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_DATABASE=wager
+      - MYSQL_ROOT_PASSWORD=root
+    # volumes:
+    #   - database_mysql:/var/lib/mysql
+    networks:
+      - testnet
+
+# volumes:
+#   api:
+#   database_mysql:
+
+# Networks to be created to facilitate communication between containers
+networks:
+  testnet:
+    driver: bridge
